@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h1>{{ msg }}</h1>
-  
+    <input type="text" v-model="search" placeholder="search records">
     <table class="table mt-4">
       <thead class="thead-dark">
         <tr>
@@ -13,7 +13,7 @@
         </tr>
       </thead>
       <tbody class="table-dark">
-        <tr v-for="record in records" :key="record.CHFNM">
+        <tr v-for="record in filteredRecords" :key="record.CHFNM">
           <td>{{record.CHFNM}}</td>
           <td>{{record.CHFTITLE}}</td>
           <td>{{record.GENTELE}}</td>
@@ -36,7 +36,8 @@ export default {
   
   data() {
     return {
-      records: []
+      records: [],
+      search: ''
       }
     },
 
@@ -44,6 +45,14 @@ export default {
     axios
       .get('https://inventory.data.gov/api/action/datastore_search?resource_id=38625c3d-5388-4c16-a30f-d105432553a4&q=KY&limit=120')
       .then(response => (this.records = response.data.result.records))
+    },
+
+    computed: {
+      filteredRecords(){
+        return this.records.filter((record) => {
+          return record.CHFNM.match(this.search);
+        })
+      }
     }
 }
 </script>
